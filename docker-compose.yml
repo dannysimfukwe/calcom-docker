@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  database:
+    image: postgres:16-alpine
+    restart: always
+    volumes:
+      - database-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: calcom
+      POSTGRES_PASSWORD: calcom
+      POSTGRES_DB: calcom
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U calcom"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    restart: always
+    volumes:
+      - redis-data:/data
+
+  calcom:
+    image: calcom.docker.scarf.sh/calcom/cal.diy
+    restart: always
+    ports:
+      - "3000"
+    environment:
+      DATABASE_URL: postgresql://calcom:calcom@database:5432/calcom
+      DATABASE_DIRECT_URL: postgresql://calcom:calcom@database:5432/calcom
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+      CALENDSO_ENCRYPTION_KEY: ${CALENDSO_ENCRYPTION_KEY}
+      NEXTAUTH_URL: ${NEXTAUTH_URL}
+      NEXT_PUBLIC_WEBAPP_URL: ${NEXT_PUBLIC_WEBAPP_URL}
+      CALCOM_TELEMETRY_DISABLED: "1"
+    depends_on:
+      database:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+volumes:
+  database-data:
+  redis-data:
