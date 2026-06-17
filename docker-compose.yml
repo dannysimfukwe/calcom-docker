@@ -23,7 +23,7 @@ services:
       - redis-data:/data
 
   calcom:
-    image: ghcr.io/dannysimfukwe/calcom-docker:latest
+    image: git.42helv.com/admin/calcom-docker:latest
     restart: always
     ports:
       - "3000"

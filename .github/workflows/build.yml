@@ -15,7 +15,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      packages: write
 
     steps:
       - name: Checkout cal.diy source
@@ -27,12 +26,12 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Log in to GitHub Container Registry
+      - name: Log in to platform registry
         uses: docker/login-action@v3
         with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          registry: git.42helv.com
+          username: admin
+          password: ${{ secrets.KAMAL_REGISTRY_PASSWORD }}
 
       - name: Build and push
         uses: docker/build-push-action@v6
@@ -40,7 +39,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ghcr.io/dannysimfukwe/calcom-docker:latest
+          tags: git.42helv.com/admin/calcom-docker:latest
           build-args: |
             MAX_OLD_SPACE_SIZE=4096
             DATABASE_URL=postgresql://placeholder:placeholder@localhost:5432/placeholder
