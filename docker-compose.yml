@@ -23,7 +23,7 @@ services:
       - redis-data:/data
 
   calcom:
-    image: calcom.docker.scarf.sh/calcom/cal.diy
+    image: ghcr.io/dannysimfukwe/calcom-docker:latest
     restart: always
     ports:
       - "3000"
